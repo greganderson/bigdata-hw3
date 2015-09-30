@@ -2556,7 +2556,6 @@ def main():
                 logging.error('Missing title element')
                 return
             Extractor(id, title, [page]).extract(sys.stdout)
-        return
 
     output_path = args.output
     if output_path != '-' and not os.path.isdir(output_path):

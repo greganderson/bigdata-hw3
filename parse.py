@@ -1,10 +1,18 @@
-import sys, subprocess
+import wikiextractor.WikiExtractor as wikix
+import sys
+from contextlib import contextmanager
 
-fname = 'small_pages/page-0001000.xml'
+f = 'small_pages/page-0001000.xml'
 
-proc = subprocess.call([sys.executable, 'wikiextractor/WikiExtractor.py', fname, '-l','-a'], stdout=subprocess.PIPE)
-output = proc.communicate()
+@contextmanager
+def redirected(stdout):
+	saved_stdout = sys.stdout
+	sys.stdout = open(stdout, 'w')
+	yield
+	sys.stdout = saved_stdout
 
+with redirected(stdout='file.txt'):
+	wikix.main(['-l', '-a', f])
 
 
 # Turn every abnormal character into a space?

@@ -2298,9 +2298,6 @@ def process_dump(input_file, template_file, out_file, file_size, file_compress,
 	else:
 		nextFile = NextFile(out_file)
 		output = OutputSplitter(nextFile, file_size, file_compress)
-		raw_input('Waiting...')
-		print 'OUTPUT STARTING...'
-		print output
 
 	# process pages
 	logging.info("Starting page extraction from %s.", input_file)
@@ -2455,7 +2452,7 @@ def reduce_process(output_queue, output):
 # Minimum size of output files
 minFileSize = 200 * 1024
 
-def main():
+def main(args):
 	global urlbase, acceptedNamespaces
 	global expand_templates, templateCache
 
@@ -2501,7 +2498,7 @@ def main():
 						version='%(prog)s ' + version,
 						help="print program version")
 
-	args = parser.parse_args()
+	args = parser.parse_args(args)
 
 	Extractor.keepLinks = args.links
 	Extractor.keepSections = args.sections

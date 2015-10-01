@@ -42,8 +42,8 @@ def get_page_id(html):
 	for i in range(5):
 		s += html[i]
 
-	start = s.find('id="')
-	s = s[start+4:]
+	start = s.find('title="')
+	s = s[start+7:]
 	return s[:s.find('"')]
 
 files = sc.wholeTextFiles('small_pages/*')
@@ -51,7 +51,8 @@ converted = files.map(read_files)
 scrubbed_text = converted.map(lambda w: re.sub(r'<.+?>', '', w))
 
 # Just word count the text tag
-# TODO: Get page_id
+# Get page_id
+
 
 # Get links
 links = converted.map(get_links)

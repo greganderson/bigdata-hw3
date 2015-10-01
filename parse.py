@@ -18,14 +18,14 @@ sc = SparkContext(conf=conf)
 ### READ IN FILES ###
 
 def read_files(f):
-	return wikix.main(['-l', '-a', f[0]])
+    return wikix.main(['-l', '-a', f[0]])
 
 def get_links(text):
-	p = re.compile('<a href=".+?".*?>')
-	a = p.findall(text)
+    p = re.compile('<a href=".+?".*?>')
+    a = p.findall(text)
 
-	# Convert anchor tags to just the link
-	return map(lambda x: x[9:x.rfind('"')], a)
+    # Convert anchor tags to just the link
+    return map(lambda x: x[9:x.rfind('"')], a)
 
 
 files = sc.wholeTextFiles('small_pages/*')

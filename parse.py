@@ -25,8 +25,11 @@ files = sc.wholeTextFiles('small_pages/*')
 converted = files.map(read_files)
 
 # Just word count the text tag
-l = converted.map(lambda line: line.split(" ")) \
+word_counts = converted.map(lambda line: line.split(" ")) \
      .filter(lambda w: len(w) >= 3) \
      .map(lambda word: (word, 1)) \
      .reduceByKey(lambda x,y: x+y) \
      .sortBy(lambda x: x[1], False)
+
+# TODO: Need to extract page_id
+page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey()

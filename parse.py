@@ -31,6 +31,8 @@ def get_links(text):
 files = sc.wholeTextFiles('small_pages/*')
 converted = files.map(read_files)
 
+scrubbed_text = converted.map(lambda w: re.sub(r'<.+?>', '', w))
+
 # Just word count the text tag
 word_counts = converted.map(lambda line: line.split(" ")) \
      .filter(lambda w: len(w) >= 3) \

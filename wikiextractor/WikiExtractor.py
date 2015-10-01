@@ -421,16 +421,6 @@ class Extractor(object):
 		text = clean(self, text)
 		footer = "\n</doc>\n"
 
-		# GREG START
-		s = header.join(compact(text))
-		s += footer
-		with open('test.txt', 'w') as f:
-			f.write(header)
-			for line in compact(text):
-				f.write(line.encode('utf-8'))
-				f.write('\n')
-			f.write(footer)
-		# GREG END
 		out.write(header)
 		for line in compact(text):
 			out.write(line.encode('utf-8'))
@@ -443,7 +433,11 @@ class Extractor(object):
 		if any(errs):
 			logging.warn("Template errors in article '%s' (%s): title(%d) recursion(%d, %d, %d)",
 						 self.title, self.id, *errs)
+		# GREG START
+		s = header.join(compact(text))
+		s += footer
 		return s
+		# GREG END
 
 	#----------------------------------------------------------------------
 	# Expand templates

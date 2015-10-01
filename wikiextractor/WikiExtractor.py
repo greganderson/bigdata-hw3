@@ -399,6 +399,7 @@ class Extractor(object):
 		self.template_title_errs = 0
 
 
+	# GREG here is the function
 	def extract(self, out):
 		"""
 		:param out: a memory file.
@@ -419,6 +420,15 @@ class Extractor(object):
 		self.magicWords['currenttime'] = time.strftime('%H:%M:%S')
 		text = clean(self, text)
 		footer = "\n</doc>\n"
+
+		# GREG START
+		with open('test.txt', 'w') as f:
+			f.write(header)
+			for line in compact(text):
+				f.write(line.encode('utf-8'))
+				f.write('\n')
+			f.write(footer)
+		# GREG END
 		out.write(header)
 		for line in compact(text):
 			out.write(line.encode('utf-8'))
@@ -2555,6 +2565,7 @@ def main(args):
 			else:
 				logging.error('Missing title element')
 				return
+			# GREG found something here
 			Extractor(id, title, [page]).extract(sys.stdout)
 
 	output_path = args.output

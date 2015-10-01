@@ -422,6 +422,8 @@ class Extractor(object):
 		footer = "\n</doc>\n"
 
 		# GREG START
+		s = header.join(compact(text))
+		s += footer
 		with open('test.txt', 'w') as f:
 			f.write(header)
 			for line in compact(text):
@@ -441,6 +443,7 @@ class Extractor(object):
 		if any(errs):
 			logging.warn("Template errors in article '%s' (%s): title(%d) recursion(%d, %d, %d)",
 						 self.title, self.id, *errs)
+		return s
 
 	#----------------------------------------------------------------------
 	# Expand templates
@@ -2549,6 +2552,7 @@ def main(args):
 	#manager = Manager()
 	#templateCache = manager.dict()
 
+	s = ''
 	if args.article:
 		if args.templates:
 			if os.path.exists(args.templates):
@@ -2566,7 +2570,7 @@ def main(args):
 				logging.error('Missing title element')
 				return
 			# GREG found something here
-			Extractor(id, title, [page]).extract(sys.stdout)
+			s = Extractor(id, title, [page]).extract(sys.stdout)
 
 	output_path = args.output
 	if output_path != '-' and not os.path.isdir(output_path):
@@ -2578,6 +2582,7 @@ def main(args):
 
 	process_dump(input_file, args.templates, output_path, file_size,
 				 args.compress, args.processes)
+	return s
 
 
 if __name__ == '__main__':

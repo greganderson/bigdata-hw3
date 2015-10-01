@@ -7,22 +7,18 @@ from contextlib import contextmanager
 ### CONFIGURATION ###
 
 
-
-"""
 conf = SparkConf()
 conf.setMaster("local[4]")
 conf.setAppName("reduce")
 conf.set("spark.executor.memory", "4g")
 
 sc = SparkContext(conf=conf)
-"""
 
 
 ### READ IN FILES ###
 
-
 def read_files(f):
-	wikix.main(['-l', '-a', f[0]])
+	return wikix.main(['-l', '-a', f[0]])
 
 def get_links(text):
 	p = re.compile('<a href=".+?".*?>')
@@ -32,12 +28,15 @@ def get_links(text):
 	return map(lambda x: x[9:x.rfind('"')], a)
 
 
-f = 'small_pages/page-0001000.xml'
-s = wikix.main(['-l', '-a', f])
+files = sc.wholeTextFiles('small_pages/*')
+converted = files.map(read_files)
 
-#files = sc.wholeTextFiles('small_pages/*')
-#converted = files.map(read_files)
-#converted.first()
+# Just word count the text tag
+word_counts = converted.map(lambda line: line.split(" ")) \
+     .filter(lambda w: len(w) >= 3) \
+     .map(lambda word: (word, 1)) \
+     .reduceByKey(lambda x,y: x+y) \
+     .sortBy(lambda x: x[1], False)
 
-
-# Turn every abnormal character into a space?
+# TODO: Need to extract page_id
+page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey()

@@ -2,7 +2,7 @@
 
 - Word count all of the words.
 - Turn all %20's into blank spaces
-- figure out how to parse HTML
+- Figure out how to parse HTML
 - Make the data structure:
 	(page_id : [(word : count), (word : count) ...])
 - Simple search that returns all the documents that contain the searched word(s)

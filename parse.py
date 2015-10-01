@@ -24,20 +24,16 @@ sc = SparkContext(conf=conf)
 def read_files(f):
 	wikix.main(['-l', '-a', f[0]])
 
+def get_links(text):
+	p = re.compile('<a href=".+?".*?>')
+	a = p.findall(text)
+
+	# Convert anchor tags to just the link
+	return map(lambda x: x[9:x.rfind('"')], a)
+
 
 f = 'small_pages/page-0001000.xml'
 s = wikix.main(['-l', '-a', f])
-s = s.replace('%20', ' ')
-
-p = re.compile('<a href=".+?".*?>')
-a = p.findall(text)
-
-# Convert anchor tags to just the link
-b = map(lambda x: x[9:x.rfind('"')], a)
-
-
-with open('file.txt', 'w') as new_f:
-	new_f.write(s.encode('utf8'))
 
 #files = sc.wholeTextFiles('small_pages/*')
 #converted = files.map(read_files)

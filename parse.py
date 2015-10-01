@@ -52,7 +52,7 @@ converted = files.map(read_files)
 scrubbed_text = converted.map(lambda w: re.sub(r'<.+?>', '', w))
 
 # Get page_id
-converted.map(lambda html: (get_page_title, html))
+title_content_map = converted.map(lambda html: (get_page_title, html))
 
 # Get links
 links = converted.map(get_links)

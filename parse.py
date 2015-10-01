@@ -37,6 +37,14 @@ def get_url(anchor):
 	except:
 		print 'Found invalid character'
 
+def get_page_id(html):
+	s = ''
+	for i in range(5):
+		s += html[i]
+
+	start = s.find('id="')
+	s = s[start+4:]
+	return s[:s.find('"')]
 
 files = sc.wholeTextFiles('small_pages/*')
 converted = files.map(read_files)

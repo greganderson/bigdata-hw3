@@ -18,14 +18,24 @@ sc = SparkContext(conf=conf)
 ### READ IN FILES ###
 
 def read_files(f):
-	return wikix.main(['-l', '-a', f[0]])
+	try:
+		s = wikix.main(['-l', '-a', f[0][5:]])
+	except:
+		return 'Found invalid character'
+	return s.encode('utf8')
 
 def get_links(text):
 	p = re.compile('<a href=".+?".*?>')
 	a = p.findall(text)
 
 	# Convert anchor tags to just the link
-	return map(lambda x: x[9:x.rfind('"')], a)
+	return map(get_url, a)
+
+def get_url(anchor):
+	try:
+		anchor[9:anchor.rfind('"')]
+	except:
+		print 'Found invalid character'
 
 
 files = sc.wholeTextFiles('small_pages/*')
@@ -35,17 +45,14 @@ converted = files.map(read_files)
 
 # Get links
 links = converted.map(get_links)
-links.first()
 
 # TODO: Toss all tags
 
-"""
 word_counts = converted.map(lambda line: line.split(" ")) \
      .filter(lambda w: len(w) >= 3) \
      .map(lambda word: (word, 1)) \
      .reduceByKey(lambda x,y: x+y) \
      .sortBy(lambda x: x[1], False)
-"""
 
 # TODO: Need to extract page_id
-#page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey().map(lambda x: (x[0], list(x[1])))
+page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey().map(lambda x: (x[0], list(x[1])))

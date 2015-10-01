@@ -37,7 +37,7 @@ def get_url(anchor):
 	except:
 		print 'Found invalid character'
 
-def get_page_id(html):
+def get_page_title(html):
 	s = ''
 	for i in range(5):
 		s += html[i]
@@ -48,16 +48,14 @@ def get_page_id(html):
 
 files = sc.wholeTextFiles('small_pages/*')
 converted = files.map(read_files)
+# Toss all tags
 scrubbed_text = converted.map(lambda w: re.sub(r'<.+?>', '', w))
 
-# Just word count the text tag
 # Get page_id
-
+converted.map(lambda html: (get_page_title, html))
 
 # Get links
 links = converted.map(get_links)
-
-# TODO: Toss all tags
 
 word_counts = converted.map(lambda line: line.split(" ")) \
      .filter(lambda w: len(w) >= 3) \

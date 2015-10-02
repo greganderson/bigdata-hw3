@@ -50,12 +50,13 @@ title_content_map = converted.map(lambda html: (get_page_title(html), html))
 # Get links
 links = converted.map(get_links)
 
-word_counts = converted.map(lambda line: line.split(" ")) \
-     .filter(lambda w: len(w) >= 3) \
-     .map(lambda word: (word, 1)) \
-     .reduceByKey(lambda x,y: x+y) \
-     .sortBy(lambda x: x[1], False)
+word_counts = scrubbed_text.map(lambda line: line.split(" ")) \
+     .map(lambda text: filter(lambda w: len(w) >= 3, text)) \
+     .map(lambda text: map(lambda word: (word, 1), text)) \
+	 .map(lambda text: reduce(pythonReduceByKey, text)) \
+     .map(lambda text: text.sortBy(lambda x: x[1], False))
+     #.map(lambda text: reduceByKey(lambda x,y: x+y, text)) \
 
 
 # TODO: Need to extract page_id
-page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey().map(lambda x: (x[0], list(x[1])))
+#page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey().map(lambda x: (x[0], list(x[1])))

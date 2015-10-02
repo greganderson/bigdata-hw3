@@ -57,9 +57,9 @@ ids = converted.map(get_page_id)
 # Get links
 links = converted.map(get_links)
 
-word_counts = scrubbed_text.map(lambda line: line.split(" ")) \
-     .map(lambda text: filter(lambda w: len(w) >= 3, text)) \
-	 .map(lambda text: Counter(text))
+word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
+		.map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \
+		.map(lambda text: (text[0], Counter(text[1])))
 
 #page_map = word_counts.map(lambda x: (page_id, x)).groupByKey().map(lambda x: (x[0], list(x[1])))
 #page_map.first()

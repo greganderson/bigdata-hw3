@@ -35,17 +35,24 @@ def get_links(text):
 
 def get_page_title(html):
 	a = html.split('\n')[0] + '</doc></page>'
-	return ET.fromstring(a)[0].attrib['id']
+	return ET.fromstring(a)[0].attrib['title']
+
+def get_page_id_with_scrubbed(html):
+	a = html.split('\n')[0] + '</doc></page>'
+	text = re.sub(r'<.+?>', '', html)
+	return (ET.fromstring(a)[0].attrib['id'], text)
 
 
 files = sc.wholeTextFiles('small_pages/*')
 converted = files.map(read_files)
 
 # Toss all tags
-scrubbed_text = converted.map(lambda w: re.sub(r'<.+?>', '', w))
+scrubbed_text = converted.map(get_page_id_with_scrubbed)
 
 # Get page_id
 title_content_map = converted.map(lambda html: (get_page_title(html), html))
+
+ids = converted.map(get_page_id)
 
 # Get links
 links = converted.map(get_links)
@@ -54,5 +61,5 @@ word_counts = scrubbed_text.map(lambda line: line.split(" ")) \
      .map(lambda text: filter(lambda w: len(w) >= 3, text)) \
 	 .map(lambda text: Counter(text))
 
-page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey().map(lambda x: (x[0], list(x[1])))
-page_map.first()
+#page_map = word_counts.map(lambda x: (page_id, x)).groupByKey().map(lambda x: (x[0], list(x[1])))
+#page_map.first()

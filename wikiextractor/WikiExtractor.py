@@ -436,7 +436,12 @@ class Extractor(object):
 		# GREG START
 		s = header.join(compact(text))
 		s += footer
+		'''
 		s = s.replace('%20', ' ')
+		s = s.replace('%28', '(')
+		s = s.replace('%29', ')')
+		s = s.replace('%2C', ',')
+		'''
 		return s
 		# GREG END
 

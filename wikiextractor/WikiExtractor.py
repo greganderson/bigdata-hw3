@@ -421,11 +421,13 @@ class Extractor(object):
 		text = clean(self, text)
 		footer = "\n</doc>\n"
 
+		'''
 		out.write(header)
 		for line in compact(text):
 			out.write(line.encode('utf-8'))
 			out.write('\n')
 		out.write(footer)
+		'''
 		errs = (self.template_title_errs,
 				self.recursion_exceeded_1_errs,
 				self.recursion_exceeded_2_errs,

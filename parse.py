@@ -33,12 +33,8 @@ def get_links(text):
 	return c
 
 def get_page_title(html):
-	s = ''
-	for i in range(5):
-		s += html[i]
-	start = s.find('title="')
-	s = s[start+7:]
-	return s[:s.find('"')]
+	a = html.split('\n')[0] + '</doc></page>'
+	return ET.fromstring(a)[0].attrib['id']
 
 
 files = sc.wholeTextFiles('small_pages/*')
@@ -48,7 +44,8 @@ converted = files.map(read_files)
 scrubbed_text = converted.map(lambda w: re.sub(r'<.+?>', '', w))
 
 # Get page_id
-title_content_map = converted.map(lambda html: (get_page_title, html))
+title_content_map = converted.map(lambda html: (get_page_title(html), html))
+# title_content_map.count == 1000
 
 # Get links
 links = converted.map(get_links)
@@ -61,4 +58,4 @@ word_counts = converted.map(lambda line: line.split(" ")) \
 
 
 # TODO: Need to extract page_id
-#page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey().map(lambda x: (x[0], list(x[1])))
+page_map = word_counts.map(lambda x: (page_id, list(x))).groupByKey().map(lambda x: (x[0], list(x[1])))

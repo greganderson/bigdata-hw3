@@ -22,15 +22,6 @@ sc = SparkContext(conf=conf)
 
 def read_files(f):
     return wikix.main(['-l', '-a', f[0][5:]])
-'''
-try:
-s = wikix.main(['-l', '-a', f[0][5:]])
-except:
-with open('error.txt', 'w') as e:
-e.write(f[0])
-return 'Found invalid character'
-return s.encode('utf8')
-'''
 
 def get_links(text):
     p = re.compile('<a href=".+?".*?>')

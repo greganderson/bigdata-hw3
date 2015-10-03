@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pyspark import SparkContext, SparkConf
 from collections import Counter
 import wikiextractor.WikiExtractor as wikix
@@ -20,11 +21,16 @@ sc = SparkContext(conf=conf)
 ### READ IN FILES ###
 
 def read_files(f):
+	return wikix.main(['-l', '-a', f[0][5:]])
+	'''
 	try:
 		s = wikix.main(['-l', '-a', f[0][5:]])
 	except:
+		with open('error.txt', 'w') as e:
+			e.write(f[0])
 		return 'Found invalid character'
 	return s.encode('utf8')
+	'''
 
 def get_links(text):
 	p = re.compile('<a href=".+?".*?>')
@@ -34,13 +40,29 @@ def get_links(text):
 	return c
 
 def get_page_title(html):
-	a = html.split('\n')[0] + '</doc></page>'
-	return ET.fromstring(a)[0].attrib['title']
+	line = html.split('\n')[0]
+	b = ''
+	try:
+		a = line + '</doc></page>'
+		b = (ET.fromstring(a)[0].attrib['title'], html)
+	except:
+		a = line + '</doc>'
+		b = (ET.fromstring(a).attrib['title'], html)
+	return b
 
 def get_page_id_with_scrubbed(html):
-	a = html.split('\n')[0] + '</doc></page>'
+	line = html.split('\n')[0]
 	text = re.sub(r'<.+?>', '', html)
-	return (ET.fromstring(a)[0].attrib['id'], text)
+	b = ''
+	try:
+		a = line + '</doc></page>'
+		b = (ET.fromstring(a)[0].attrib['id'], text)
+	except:
+		a = line + '</doc>'
+		b = (ET.fromstring(a).attrib['id'], text)
+		with open('error.txt', 'w') as f:
+			f.write(line + '</doc>')
+	return b
 
 
 files = sc.wholeTextFiles('small_pages/*')

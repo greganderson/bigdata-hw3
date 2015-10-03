@@ -436,8 +436,10 @@ class Extractor(object):
 			logging.warn("Template errors in article '%s' (%s): title(%d) recursion(%d, %d, %d)",
 						 self.title, self.id, *errs)
 		# GREG START
-		s = header.join(compact(text))
-		s += footer
+		s = re.sub(r'[^\x00-\x7F]+',' ', header)
+		#s += re.sub(r'[^\x00-\x7F]+',' ', compact(text))
+		s += re.sub(r'[^\x00-\x7F]+',' ', text)
+		s += re.sub(r'[^\x00-\x7F]+',' ', footer)
 		'''
 		s = s.replace('%20', ' ')
 		s = s.replace('%28', '(')

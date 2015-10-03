@@ -22,15 +22,6 @@ sc = SparkContext(conf=conf)
 
 def read_files(f):
 	return wikix.main(['-l', '-a', f[0][5:]])
-	'''
-	try:
-		s = wikix.main(['-l', '-a', f[0][5:]])
-	except:
-		with open('error.txt', 'w') as e:
-			e.write(f[0])
-		return 'Found invalid character'
-	return s.encode('utf8')
-	'''
 
 def get_links(text):
 	p = re.compile('<a href=".+?".*?>')
@@ -50,26 +41,31 @@ def get_page_title(html):
 		b = (ET.fromstring(a).attrib['title'], html)
 	return b
 
-def get_page_id_with_scrubbed(html):
+def get_page_title_with_scrubbed(html):
 	line = html.split('\n')[0]
 	text = re.sub(r'<.+?>', '', html)
 	b = ''
 	try:
 		a = line + '</doc></page>'
-		b = (ET.fromstring(a)[0].attrib['id'], text)
+		b = (ET.fromstring(a)[0].attrib['title'], text)
 	except:
 		a = line + '</doc>'
-		b = (ET.fromstring(a).attrib['id'], text)
+		b = (ET.fromstring(a).attrib['title'], text)
 		with open('error.txt', 'w') as f:
 			f.write(line + '</doc>')
 	return b
+
+def get_top_10(text):
+	a = word_counts.map(lambda x: (x[0], x[1][text]))
+	b = a.sortBy(lambda x: x[1], False)
+	return b.take(10)
 
 
 files = sc.wholeTextFiles('small_pages/*')
 converted = files.map(read_files)
 
 # Toss all tags
-scrubbed_text = converted.map(get_page_id_with_scrubbed)
+scrubbed_text = converted.map(get_page_title_with_scrubbed)
 
 # Get page_id
 title_content_map = converted.map(lambda html: (get_page_title(html), html))
@@ -80,3 +76,6 @@ links = converted.map(get_links)
 word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
 		.map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \
 		.map(lambda text: (text[0], Counter(text[1])))
+
+
+a = get_top_10('Brazil')

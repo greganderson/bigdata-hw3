@@ -35,10 +35,10 @@ def get_page_title(html):
 	b = ''
 	try:
 		a = line + '</doc></page>'
-		b = (ET.fromstring(a)[0].attrib['title'], html)
+		b = ET.fromstring(a)[0].attrib['title']
 	except:
 		a = line + '</doc>'
-		b = (ET.fromstring(a).attrib['title'], html)
+		b = ET.fromstring(a).attrib['title']
 	return b
 
 def get_page_title_with_scrubbed(html):
@@ -59,6 +59,9 @@ def get_top_10(text):
 	a = word_counts.map(lambda x: (x[0], x[1][text]))
 	b = a.sortBy(lambda x: x[1], False)
 	return b.take(10)
+
+def get_page(title):
+	return title_content_map.filter(lambda x: x[0] == title).first()[1]
 
 
 files = sc.wholeTextFiles('small_pages/*')

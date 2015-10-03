@@ -61,9 +61,12 @@ def get_page_title_n_link(html):
     return (title_and_text[0], link)
 
 def get_top_10(text):
-	a = word_counts.map(lambda x: (x[0], x[1][text]))
-        b = a.sortBy(lambda x: x[1], False)
-	return b.take(10)
+	counts = word_counts.map(lambda x: (x[0], x[1][text]))
+	# Get rid of pages that don't contain the word(s)
+	filtered_counts = counts.filter(lambda x: x[1] > 0)
+	ranked_results = filtered_counts.join(page_rank)
+	sorted_ranked_results = ranked_results.sortBy(lambda x: x[1][1], False)
+	return sorted_ranked_results.take(10)
 
 def get_page(title):
 	return title_content_map.filter(lambda x: x[0] == title).first()[1]

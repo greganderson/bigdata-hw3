@@ -18,6 +18,13 @@ conf.set("spark.executor.memory", "4g")
 sc = SparkContext(conf=conf)
 
 
+if len(sys.argv) != 2:
+	print 'Invalid arguments'
+	print 'Usage: spark-submit parse.py <search_term>'
+	exit(1)
+
+search_term = sys.argv[1]
+
 ### READ IN FILES ###
 
 def read_files(f):
@@ -84,14 +91,18 @@ title_content_map = converted.map(lambda html: (get_page_title(html), html))
 # Get links
 title_n_links = converted.map(get_page_title_n_link)
 
+# Compute page rank
 page_rank = title_n_links.flatMapValues(lambda t: t) \
 		.map(lambda t: (t[1], 1)) \
 		.reduceByKey(lambda x,y: x+y) \
 		.map(lambda t: (t[0], t[1] - 1)) \
 		.sortBy(lambda x: x[1], False)
 
+# Compute word count
 word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
     .map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \
     .map(lambda text: (text[0], Counter(text[1]))).cache()
 
-a = get_top_10('Brazil')
+# Perform search
+a = get_top_10(search_term)
+print a

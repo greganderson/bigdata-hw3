@@ -82,7 +82,7 @@ title_content_map = converted.map(lambda html: (get_page_title(html), html))
 links = converted.map(get_links)
 
 title_n_links = converted.map(get_page_title_n_link)
-page_rank = title_n_links.flatMapValues(lambda t: t).map(lambda t: (t[1], 1)).reduceByKey(lambda x,y: x+y).map(lambda t: (t[0], t[1] - 1))
+page_rank = title_n_links.flatMapValues(lambda t: t).map(lambda t: (t[1], 1)).reduceByKey(lambda x,y: x+y).map(lambda t: (t[0], t[1] - 1)).sortBy(lambda x: x[1], False)
 
 word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
     .map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \

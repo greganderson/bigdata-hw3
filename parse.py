@@ -57,7 +57,7 @@ def get_page_title_with_scrubbed(html):
 
 def get_top_10(text):
 	a = word_counts.map(lambda x: (x[0], x[1][text]))
-	return a.takeOrdered(10, key = lambda x: x[1])#b = a.sortBy(lambda x: x[1], False)
+	return a.takeOrdered(10, key = lambda x: -x[1])#b = a.sortBy(lambda x: x[1], False)
 	#return b.take(10)
 
 

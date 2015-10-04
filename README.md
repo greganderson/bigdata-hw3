@@ -1,17 +1,16 @@
 # bigdata-hw3
 
-- Word count all of the words.
-- Turn all %20's into blank spaces
-- Figure out how to parse HTML
-- Make the data structure:
-	(page_id : [(word : count), (word : count) ...])
-- Simple search that returns all the documents that contain the searched word(s)
-- Simple website
+Instructions on how to run:
 
+Run:
+	spark-submit parse.py <search_term>
 
-Next
-	- Find and collect the links.
+Where <search_term> is the term you want to search on.
 
-Extra
-	- In the search engine, don't accept any special characters.
-	- Fall into the spider traps and rank the pages based on the number of external links they have.
+Make sure that you have the directory of small_pages in the same working
+directory.  If you want to use the cluster, use parse-big.py.  That is set to
+use the cluster hdfs.
+
+The results will be returned in a format suitable for programmers.  A demo of
+the web version will be showed at another time where the results will be a
+little more human usable.

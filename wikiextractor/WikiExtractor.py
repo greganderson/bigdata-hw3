@@ -440,8 +440,8 @@ class Extractor(object):
 		#s += re.sub(r'[^\x00-\x7F]+',' ', compact(text))
 		s += re.sub(r'[^\x00-\x7F]+',' ', text)
 		s += re.sub(r'[^\x00-\x7F]+',' ', footer)
-		'''
 		s = s.replace('%20', ' ')
+		'''
 		s = s.replace('%28', '(')
 		s = s.replace('%29', ')')
 		s = s.replace('%2C', ',')

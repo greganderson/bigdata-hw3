@@ -1,8 +1,62 @@
+<!DOCTYPE html>
 <html>
-<body>
 
-Search: <input type="text">
-<button type="button">Submit</button>
+<head>
+  <script>
+    function getRequest() {
+    document.getElementById("sending").innerHTML = "Get Request Sent!";
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function() { 
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            callback(xmlHttp.responseText);
+    }
+    xmlHttp.open("GET", Url, true);
+    xmlHttp.send(null);
+    }
+  </script>
+<head>
 
-</body>
+  <body>
+
+    <center>
+      <div>
+
+	<legend>
+	  Wiki Search Tool
+	  <p id="sending"> </p>
+	</legend>
+	Search: <input type="text">
+	<button type="button" onclick="getRequest()">Submit</button>
+	
+      </div>
+    </center>
+
+  </body>
+
+
+  <style>
+    div {
+    height: 200px;
+    width: 400px;
+    background: white;
+
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -100px;
+    margin-left: -200px;
+    }
+
+    legend {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    size: 7
+    }
+
+    title {
+    height: 100px;
+    width: 200px;
+    }
+  </style>
 </html>

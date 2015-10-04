@@ -70,7 +70,7 @@ def get_page(title):
 
 
 files = sc.wholeTextFiles('small_pages/*')
-converted = files.map(read_files)
+converted = files.map(read_files).cache()
 
 # Toss all tags
 scrubbed_text = converted.map(get_page_title_with_scrubbed)
@@ -82,9 +82,10 @@ title_content_map = converted.map(lambda html: (get_page_title(html), html))
 links = converted.map(get_links)
 
 title_n_links = converted.map(get_page_title_n_link)
+page_rank = title_n_links.flatMapValues(lambda t: t).map(lambda t: (t[1], 1)).reduceByKey(lambda x,y: x+y).map(lambda t: (t[0], t[1] - 1))
 
 word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
     .map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \
-    .map(lambda text: (text[0], Counter(text[1])))
+    .map(lambda text: (text[0], Counter(text[1]))).cache()
 
 a = get_top_10('Brazil')

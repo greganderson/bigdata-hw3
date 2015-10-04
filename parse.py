@@ -55,10 +55,15 @@ def get_page_title_with_scrubbed(html):
 			f.write(line + '</doc>')
 	return b
 
+def get_page_title_n_link(html):
+    title_and_text =get_page_title_with_scrubbed(html)
+    link = get_links(html)
+    return (title_and_text[0], title_and_text[1], link)
+
 def get_top_10(text):
 	a = word_counts.map(lambda x: (x[0], x[1][text]))
-	return a.takeOrdered(10, key = lambda x: -x[1])#b = a.sortBy(lambda x: x[1], False)
-	#return b.take(10)
+        b = a.sortBy(lambda x: x[1], False)
+	return b.take(10)
 
 
 files = sc.wholeTextFiles('small_pages/*')
@@ -72,6 +77,8 @@ title_content_map = converted.map(lambda html: (get_page_title(html), html))
 
 # Get links
 links = converted.map(get_links)
+
+mpd = converted.map(get_page_title_n_link)
 
 word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
     .map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \

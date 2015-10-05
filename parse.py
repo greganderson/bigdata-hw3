@@ -10,20 +10,14 @@ from contextlib import contextmanager
 ### CONFIGURATION ###
 
 
-conf = SparkConf()
-conf.setMaster("local[4]")
-conf.setAppName("reduce")
-conf.set("spark.executor.memory", "4g")
-
-sc = SparkContext(conf=conf)
-
-
+'''
 if len(sys.argv) != 2:
 	print 'Invalid arguments'
 	print 'Usage: spark-submit parse.py <search_term>'
 	exit(1)
 
 search_term = sys.argv[1]
+'''
 
 ### READ IN FILES ###
 
@@ -68,6 +62,7 @@ def get_page_title_n_link(html):
     return (title_and_text[0], link)
 
 def get_top_10(text):
+	global word_counts
 	counts = word_counts.map(lambda x: (x[0], x[1][text]))
 	# Get rid of pages that don't contain the word(s)
 	filtered_counts = counts.filter(lambda x: x[1] > 0)
@@ -76,33 +71,44 @@ def get_top_10(text):
 	return sorted_ranked_results.take(10)
 
 def get_page(title):
+	global title_content_map
 	return title_content_map.filter(lambda x: x[0] == title).first()[1]
 
 
-files = sc.wholeTextFiles('small_pages/*')
-converted = files.map(read_files).cache()
+def setup(sc):
+	global files
+	global converted
+	global scrubbed_text
+	global title_content_map
+	global title_n_links
+	global page_rank
+	global word_counts
 
-# Toss all tags
-scrubbed_text = converted.map(get_page_title_with_scrubbed)
+	files = sc.wholeTextFiles('small_pages/*')
+	converted = files.map(read_files).cache()
 
-# Get page_id
-title_content_map = converted.map(lambda html: (get_page_title(html), html))
+	# Toss all tags
+	scrubbed_text = converted.map(get_page_title_with_scrubbed)
 
-# Get links
-title_n_links = converted.map(get_page_title_n_link)
+	# Get page_id
+	title_content_map = converted.map(lambda html: (get_page_title(html), html))
 
-# Compute page rank
-page_rank = title_n_links.flatMapValues(lambda t: t) \
-		.map(lambda t: (t[1], 1)) \
-		.reduceByKey(lambda x,y: x+y) \
-		.map(lambda t: (t[0], t[1] - 1)) \
-		.sortBy(lambda x: x[1], False)
+	# Get links
+	title_n_links = converted.map(get_page_title_n_link)
 
-# Compute word count
-word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
-    .map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \
-    .map(lambda text: (text[0], Counter(text[1]))).cache()
+	# Compute page rank
+	page_rank = title_n_links.flatMapValues(lambda t: t) \
+			.map(lambda t: (t[1], 1)) \
+			.reduceByKey(lambda x,y: x+y) \
+			.map(lambda t: (t[0], t[1] - 1)) \
+			.sortBy(lambda x: x[1], False)
 
-# Perform search
-a = get_top_10(search_term)
-print a
+	# Compute word count
+	word_counts = scrubbed_text.map(lambda line: (line[0], line[1].split(" "))) \
+		.map(lambda text: (text[0], filter(lambda w: len(w) >= 3, text[1]))) \
+		.map(lambda text: (text[0], Counter(text[1]))).cache()
+
+	# Perform search
+	#a = get_top_10(search_term)
+	#print a
+

@@ -1,5 +1,7 @@
 from flask import Blueprint
 from flask import render_template
+from flask import request
+
 main = Blueprint('main', __name__)
 
 import json
@@ -14,6 +16,12 @@ def index():
 @main.route("/page/<string:title>", methods=["GET"])
 def page(title):
 	return parse.get_page(title)
+	
+@main.route("/search", methods=['POST'])
+def main_page_search():
+	term = request.form['line']
+	return search(term)
+
 
 @main.route("/search/<string:term>", methods=["GET"])
 def search(term):

@@ -67,9 +67,23 @@ def get_top_10(text):
 	counts = word_counts.map(lambda x: (x[0], x[1][text]))
 	# Get rid of pages that don't contain the word(s)
 	filtered_counts = counts.filter(lambda x: x[1] > 0)
+	ranked_results = filtered_counts.union(page_rank) \
+			.reduceByKey(lambda x, y: (x, y))
+	#ranked_results = filtered_counts.join(page_rank)
+	sorted_ranked_results = ranked_results.sortBy(lambda x: x[1], False)
+	#sorted_ranked_results = ranked_results.sortBy(lambda x: x[1][1], False)
+	return sorted_ranked_results.take(10)
+
+def get_multiple_term_top_10(text):
+	global word_counts
+	global page_rank
+	counts = word_counts.map(lambda x: (x[0], x[1][text]))
+	# Get rid of pages that don't contain the word(s)
+	filtered_counts = counts.filter(lambda x: x[1] > 0)
 	ranked_results = filtered_counts.join(page_rank)
 	sorted_ranked_results = ranked_results.sortBy(lambda x: x[1][1], False)
 	return sorted_ranked_results.take(10)
+
 
 def get_page(title):
 	global title_content_map
@@ -101,7 +115,7 @@ def setup(sc):
 	page_rank = title_n_links.flatMapValues(lambda t: t) \
 			.map(lambda t: (t[1], 1)) \
 			.reduceByKey(lambda x,y: x+y) \
-			.map(lambda t: (t[0], t[1] - 1)) \
+			.map(lambda t: (t[0], t[1])) \
 			.sortBy(lambda x: x[1], False)
 
 	# Compute word count

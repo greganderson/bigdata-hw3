@@ -10,7 +10,7 @@
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
             callback(xmlHttp.responseText);
     }
-    xmlHttp.open("GET", Url, true);
+    xmlHttp.open("GET", test, true);
     xmlHttp.send(null);
     }
   </script>
@@ -25,8 +25,11 @@
 	  Wiki Search Tool
 	  <p id="sending"> </p>
 	</legend>
-	Search: <input type="text">
-	<button type="button" onclick="getRequest()">Submit</button>
+	Search:
+	<form action="search" method="post">
+		<input name="line">
+		<button>Submit</button>
+	</form>
 	
       </div>
     </center>

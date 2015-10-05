@@ -8,8 +8,13 @@ from flask import Flask, request
 
 @main.route("/", methods=["GET"])
 def index():
-	a = parse.get_top_10('Brazil')
-	return str(a)
+	a = parse.get_top_10('Carnegie')
+
+	s = '<html><body><ul>'
+	for el in a:
+		s += '<li><a href="' + el[0] + '">' + el[0] + '</a></li>'
+	s += '</ul></body></html>'
+	return s
 
 def create_app(spark_context):
 	parse.setup(spark_context)

@@ -3,9 +3,9 @@
 Instructions on how to run:
 
 Run:
-	spark-submit parse.py search_term
+	spark-submit parse.py &ltsearch_term&gt
 
-Where 'search_term' is the term you want to search on.
+Where &ltsearch_term&gt is the term you want to search on.
 
 Make sure that you have the directory of small_pages in the same working
 directory.  If you want to use the cluster, use parse-big.py.  That is set to

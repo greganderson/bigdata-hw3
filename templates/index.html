@@ -1,65 +1,53 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-  <script>
-    function getRequest() {
-    document.getElementById("sending").innerHTML = "Get Request Sent!";
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.onreadystatechange = function() { 
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
-            callback(xmlHttp.responseText);
-    }
-    xmlHttp.open("GET", test, true);
-    xmlHttp.send(null);
-    }
-  </script>
-<head>
-
-  <body>
+  <body background="BingWallpaper-2015-10-05.jpg">
 
     <center>
       <div>
-
-	<legend>
-	  Wiki Search Tool
-	  <p id="sending"> </p>
-	</legend>
-	Search:
+	<font size="7">
+	  <b style="color: white">Wiki Search Tool</b>	  
+	</font>
 	<form action="search" method="post">
-		<input name="line">
-		<button>Submit</button>
+	  <input class="inputS" name="line">
+	  <button class="buttonS">Submit</button>
 	</form>
-	
       </div>
     </center>
-
   </body>
 
 
   <style>
-    div {
-    height: 200px;
-    width: 400px;
+    .inputS{
+    width: 500px;
+    height: 50px;
+    font-size: 24px;
+    }
+
+    .buttonS{
+    width: 100px;
+    height: 50px;
     background: white;
+    }
+    
+    div {
+    height: 400px;
+    width: 800px;
+    background: transperent;
 
     position: fixed;
     top: 50%;
     left: 50%;
     margin-top: -100px;
-    margin-left: -200px;
+    margin-left: -400px;
     }
 
     legend {
     width: 100px;
     height: 100px;
     overflow: hidden;
-    size: 7
+    size: 10
     }
-
-    title {
-    height: 100px;
-    width: 200px;
     }
   </style>
 </html>

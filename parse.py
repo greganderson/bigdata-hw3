@@ -63,6 +63,7 @@ def get_page_title_n_link(html):
 
 def get_top_10(text):
 	global word_counts
+	global page_rank
 	counts = word_counts.map(lambda x: (x[0], x[1][text]))
 	# Get rid of pages that don't contain the word(s)
 	filtered_counts = counts.filter(lambda x: x[1] > 0)

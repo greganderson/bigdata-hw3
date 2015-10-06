@@ -89,6 +89,16 @@ def get_multiple_term_top_10(text):
 	sorted_ranked_results = ranked_results.sortBy(lambda x: x[1], False)
 	return sorted_ranked_results.take(10)
 
+def compute_page_rank(links, ranks, n):
+	for i in range(n):
+		contribs = links.join(ranks).flatMap(lambda t: compute_contrib(t[1][0], t[1][1]))
+		ranks = contribs.reduceByKey(lambda x,y: x+y).mapValues(lambda rank: rank * 0.85 + 0.15)
+	return ranks
+
+def compute_contrib(urls, rank):
+	num_urls = len(urls)
+	for url in urls:
+		yield(url, rank / num_urls)
 
 def get_page(title):
 	global title_content_map
@@ -115,6 +125,9 @@ def setup(sc):
 
 	# Get links
 	title_n_links = converted.map(get_page_title_n_link)
+	link_pairs = title_n_links.flatMapValues(lambda t: t).distinct().groupByKey().cache()
+	ranks = link_pairs.map(lambda t: (t[0], 1.0))
+	page_rank = compute_page_rank(link_pairs, ranks, 10)
 
 	# Compute page rank
 	page_rank = title_n_links.flatMapValues(lambda t: t) \

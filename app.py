@@ -25,7 +25,11 @@ def main_page_search():
 
 @main.route("/search/<string:term>", methods=["GET"])
 def search(term):
-	a = parse.get_top_10(term)
+	a = ''
+	if len(term.split(' ')) > 1:
+		a = parse.get_multiple_term_top_10(term)
+	else:
+		a = parse.get_top_10(term)
 
 	s = '''
 <!DOCTYPE html>
@@ -34,7 +38,7 @@ def search(term):
     <div>'''
 
 	for el in a:
-		s += '<a href="/page/' + el[0] + '"><p class="padding">' + el[0] + '</p></a>'
+		s += '<a href="/page/' + str(el[0]) + '"><p class="padding">' + str(el[0]) + '</p></a>'
 	s += '''
     </div>
   </body>
